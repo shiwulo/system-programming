@@ -15,6 +15,10 @@ extern inline int myRand()
 		result = rand()*rand();
 }
 
+long ts_to_long(struct timespec t) {
+	return t.tv_sec * 1000000000 + t.tv_nsec;
+}
+
 int main(int argc, char **argv)
 {
 	int result, i;
@@ -37,9 +41,9 @@ int main(int argc, char **argv)
 	clock_getres(CLOCK_PROCESS_CPUTIME_ID, &t_res);
 	printf("CLOCK_PROCESS_CPUTIME_ID resolution:\t %ld\n", t_res.tv_nsec);
 
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tt1);
+	clock_gettime(CLOCK_MONOTONIC, &tt1);
 	i++;
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tt2);
+	clock_gettime(CLOCK_MONOTONIC, &tt2);
 	//printf("%d\n", result);
-	printf("abs() consumes %ld nanoseconds!\n", tt2.tv_nsec - tt1.tv_nsec);
+	printf("i++ consumes %ld nanoseconds!\n", ts_to_long(tt2) - ts_to_long(tt1));
 }

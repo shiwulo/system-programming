@@ -43,7 +43,7 @@ int main()
 {
 	printf("hello\n");
 	initTable();
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 1000000; i++)
 	{
 		sumRow();
 		sumCol();
