@@ -10,8 +10,9 @@ int main() {
 	fd = open("./myHole", O_RDWR| O_CREAT, S_IRUSR| S_IWUSR);
 	if (fd <0)
 		perror("open");
+    lseek(fd, 100000000000, SEEK_SET);
 	write(fd, "1", sizeof("1"));
-	lseek(fd, 100000, SEEK_SET);
+	lseek(fd, 100000, SEEK_CUR);
 	write(fd, "2", sizeof("2"));
 	lseek(fd, 100000, SEEK_CUR);
 	write(fd, "3", sizeof("3"));

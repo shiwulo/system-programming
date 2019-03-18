@@ -17,7 +17,9 @@ int main(int argc, char* argv[]) {
     ssize_t numIn, numOut;
     char buffer[BUF_SIZE];
     off_t begin=0, end=0;
-    int fileSize, blockSize, pos=0;
+    long long fileSize, blockSize, pos=0;
+
+    printf("sizeof(int)=%ld, sizeof(long long)=%ld, sizeof(off_t)=%ld\n", sizeof(int), sizeof(long long), sizeof(off_t));
  
     inputFd = open (argv [1], O_RDONLY); 
     outputFd = open(argv[2], O_WRONLY | O_CREAT, S_IRUSR| S_IWUSR);

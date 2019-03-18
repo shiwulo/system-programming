@@ -41,22 +41,18 @@ int main(int argc, char **argv)
     int cpu_freq_i;
     FILE *in;
     double d = 1.1;
+    int tmp = 0;
 
-/*
-    for (i=0; i<100000000; i++) {
-        d=d*d;
-    }
-    printf("%f", d);    
-*/
+
     cycles = rdtsc();
-    result = abs(-33);
+    tmp++;
     cycles = rdtsc() - cycles;
-    printf("rdtsc: abs() consumes %d cycles!\n", (int)cycles);
+    printf("rdtsc: tmp++ consumes %d cycles!\n", (int)cycles);
 
     cycles = rdtscp();
-    result = abs(-33);
+    tmp++;
     cycles = rdtscp() - cycles;
-    printf("rdtscp: abs() consumes %d cycles!\n", (int)cycles);
+    printf("rdtscp: tmp++ consumes %ld cycles!\n", cycles);
 
     // for real machine only, you cannot run the following code on most
     // virtual machines
