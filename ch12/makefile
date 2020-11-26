@@ -1,12 +1,12 @@
 SHELL = /bin/bash
 CC = gcc
-CFLAGS = -g -pthread -D_Float32x=float -D_Float64x="long double" -D_Float32=float -D_Float64="long double"
+CFLAGS = -g -O3 -pthread
 SRC = $(wildcard *.c)
 EXE = $(patsubst %.c, %, $(SRC))
 
-all: ${EXE}
+all:	${EXE}
 
-%:	%.c
+%:		%.c
 	${CC} ${CFLAGS} $@.c -o $@
 
 clean:
