@@ -6,24 +6,12 @@
 #include <sched.h>
 #include <string.h>
 #include <sched.h>
-
-inline int abs(int a)
-{
-    return a > 0 ? a : -1 * a;
-}
-
-extern __inline__ uint64_t rdtsc(void)
-{
-    uint64_t x;
-    __asm__ volatile ("rdtsc":"=A" (x));
-    return x;
-}
+#include <assert.h>
 
 /*
 The RDTSCP instruction reads the same TSC as the RDTSC instruction, so if RDTSC is invariant, then RDTSCP will be as well.
 RDTSCP is slightly more ordered than RDTSC.  RDTSC is not ordered at all, which means that it will execute some time in the out-of-order window of the processor, which may be before or after the instruction(s) that you are interested in timing.   RDTSCP will not execute until all prior instructions (in program order) have executed.  So it can't execute "early", but there is no guarantee that the execution won't be delayed until after some subsequent (in program order) instructions have executed.
 */
-
 extern __inline__ uint64_t rdtscp(void)
 {
     uint32_t lo, hi;
@@ -32,38 +20,30 @@ extern __inline__ uint64_t rdtscp(void)
     return ((uint64_t) lo) | (((uint64_t) hi) << 32);
 }
 
+long ts_to_long(struct timespec t) {
+	return t.tv_sec * 1000000000 + t.tv_nsec;
+}
+
 int main(int argc, char **argv)
 {
-    int result, i;
-    uint64_t cycles;
-    char *cpu_info_file = (char *)malloc(200);
-    char *cpu_freq = (char *)malloc(200);
-    int cpu_freq_i;
-    FILE *in;
-    double d = 1.1;
-    int tmp = 0;
+    int tmp;
+    uint64_t cycles1, cycles2;
+    struct timespec ts1, ts2;
 
+    printf("這個程式是量測一個指令執行的時間，但CPU可同時執行數十個指令\n");
+    printf("因此這些量測方法比較適合量測大範圍的程式碼\n\n");
 
-    cycles = rdtsc();
+    cycles1 = rdtscp();
     tmp++;
-    cycles = rdtsc() - cycles;
-    printf("rdtsc: tmp++ consumes %d cycles!\n", (int)cycles);
+    cycles2 = rdtscp();
 
-    cycles = rdtscp();
+    clock_gettime(CLOCK_MONOTONIC, &ts1);
     tmp++;
-    cycles = rdtscp() - cycles;
-    printf("rdtscp: tmp++ consumes %ld cycles!\n", cycles);
+    clock_gettime(CLOCK_MONOTONIC, &ts2);
 
-    // for real machine only, you cannot run the following code on most
-    // virtual machines
-    printf("current CPU id is %d\n", sched_getcpu());
-    sprintf(cpu_info_file,
-            "/sys/devices/system/cpu/cpu%d/cpufreq/scaling_cur_freq",
-            sched_getcpu());
-    printf("cpu info path := %s\n", cpu_info_file);
-    in = fopen(cpu_info_file, "r");
-    fgets(cpu_freq, 200, in);
-    sscanf(cpu_freq, "%d", &cpu_freq_i);
-    cpu_freq_i = cpu_freq_i / 1000;
-    printf("cpu freq := %dMHz\n", cpu_freq_i);
+    printf("開始 %lu, 結束 %lu\n",cycles1, cycles2);
+    printf("rdtscp: tmp++ consumes %lu cycles!\n", cycles2-cycles1);
+    printf("開始 %lu, 結束 %lu\n",ts_to_long(ts1), ts_to_long(ts2));
+    printf("clock_gettime: tmp++ consumes %lu nanoseconds!\n", ts_to_long(ts2)-ts_to_long(ts1));
+    assert(system("cat /proc/cpuinfo | grep 'cpu MHz' | head -1")>=0);
 }

@@ -15,6 +15,7 @@ extern inline int myRand()
 		result = rand()*rand();
 }
 
+//將timespec轉成nanoseconds
 long ts_to_long(struct timespec t) {
 	return t.tv_sec * 1000000000 + t.tv_nsec;
 }
@@ -22,28 +23,24 @@ long ts_to_long(struct timespec t) {
 int main(int argc, char **argv)
 {
 	int result, i;
-	//struct timespec tp;
+	//clock_gettime的精准度
 	struct timespec t_res;
-	clockid_t clk_id;
+	//開始及結束時間
 	struct timespec tt1, tt2;
 
-	// clk_id = CLOCK_REALTIME;
-	clk_id = CLOCK_MONOTONIC;
-	// clk_id = CLOCK_BOOTTIME;
-	//clk_id = CLOCK_PROCESS_CPUTIME_ID;
-
+	printf("不同參數下，clock_gettime的精準度\n");
 	clock_getres(CLOCK_REALTIME, &t_res);
-	printf("CLOCK_REALTIME resolution:\t\t %ld\n", t_res.tv_nsec);
+	printf("CLOCK_REALTIME resolution:\t\t %ld nanoseconds\n", t_res.tv_nsec);
 	clock_getres(CLOCK_MONOTONIC, &t_res);
-	printf("CLOCK_MONOTONIC resolution:\t\t %ld\n", t_res.tv_nsec);
+	printf("CLOCK_MONOTONIC resolution:\t\t %ld nanoseconds\n", t_res.tv_nsec);
 	clock_getres(CLOCK_BOOTTIME, &t_res);
-	printf("CLOCK_BOOTTIME resolution:\t\t %ld\n", t_res.tv_nsec);
+	printf("CLOCK_BOOTTIME resolution:\t\t %ld nanoseconds\n", t_res.tv_nsec);
 	clock_getres(CLOCK_PROCESS_CPUTIME_ID, &t_res);
-	printf("CLOCK_PROCESS_CPUTIME_ID resolution:\t %ld\n", t_res.tv_nsec);
+	printf("CLOCK_PROCESS_CPUTIME_ID resolution:\t %ld nanoseconds\n", t_res.tv_nsec);
 
+	printf("印出執行『i++』花多少時間\n");
 	clock_gettime(CLOCK_MONOTONIC, &tt1);
 	i++;
 	clock_gettime(CLOCK_MONOTONIC, &tt2);
-	//printf("%d\n", result);
 	printf("i++ consumes %ld nanoseconds!\n", ts_to_long(tt2) - ts_to_long(tt1));
 }
