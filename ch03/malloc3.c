@@ -13,6 +13,9 @@ int main() {
 	p1=(char*)malloc(64*4096);
 	printf("malloc(1)\n");
 	p2=(char*)malloc(1);
-        printf("malloc(1)\n");
-        p3=(char*)malloc(1);
+    printf("malloc(1)\n");
+    p3=(char*)malloc(1);
+	char command[1024];
+	printf("執行malloc『後』的memory的layout\n");
+	sprintf(command, "pmap %d", getpid());
 }

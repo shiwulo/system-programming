@@ -18,10 +18,11 @@ int main(int argc, char** argv) {
     long long end_ns;
     long long ns=0;
     int i;
-    for (int i=0; i<100000000; i++) {
+    const int loopCount = 10000000;
+    for (int i=0; i<loopCount; i++) {
         clock_gettime(CLOCK_REALTIME, &ts_begin);
         clock_gettime(CLOCK_REALTIME, &ts_end);
         ns += timespec2nsec(ts_end)-timespec2nsec(ts_begin);
     }
-    printf ("%f ns\n", (double)ns/100000000);
+    printf ("clock_gettime 本身要花掉的時間點的近似值為：%f ns\n", (double)ns/loopCount);
 }
