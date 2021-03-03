@@ -26,7 +26,7 @@ long ts_to_long(struct timespec t) {
 
 int main(int argc, char **argv)
 {
-    int tmp;
+    int tmp=0;
     uint64_t cycles1, cycles2;
     struct timespec ts1, ts2;
 
