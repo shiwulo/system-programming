@@ -78,6 +78,7 @@ int main(int argc, char* argv[]) {
             //                 ^data_off               ^hole_off=curoff
             continue;
         }
+        //🐶 🐱 🐭 🐹 🐰 🦊 底下這一段可以用 mmap + memcpy 取代
         //至此，data_off一定在前面，hole_off一定在後面
 		blockSize=hole_off-data_off;
 		lseek(inputFd, data_off, SEEK_SET);
