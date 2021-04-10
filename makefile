@@ -1,6 +1,6 @@
 SHELL = /bin/bash
-CC = icc
-CFLAGS = -g -D_Float32x=float -D_Float64x="long double" -D_Float32=float -D_Float64="long double"
+CC = gcc
+CFLAGS = -O3 -pg -g -march=skylake	-mavx512f -finstrument-functions -z lazy -lrt
 SRC = $(wildcard *.c)
 EXE = $(patsubst %.c, %, $(SRC))
 

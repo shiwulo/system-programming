@@ -20,10 +20,10 @@ int main() {
 	//寫入“1”，很少出錯，懶得檢查
 	write(fd, "1", sizeof("1"));
 	//lseek將『檔案指標』由『目前』位置向後移動100G，lseek比較可能出錯，用assert檢查一下
-	assert(lseek(fd, 10*M, SEEK_CUR) != -1);
+	assert(lseek(fd, 10, SEEK_CUR) != -1);
 	write(fd, "2", sizeof("2"));
-	assert(lseek(fd, 10*M, SEEK_CUR) != -1);
-	write(fd, "3", sizeof("3"));
+	assert(lseek(fd, 10, SEEK_CUR) != -1);
+	write(fd, "3\n", sizeof("3\n"));
 	close(fd);
 	system("ls myHole -alhs");
 	return 0;
