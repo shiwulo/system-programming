@@ -72,13 +72,13 @@ int main()
 	
 	//printResult();
 	
-	printf("col_m %lld, row_m %lld\n", col_m, row_m);
+	printf(" col_m %lld\n row_m %lld\n", col_m, row_m);
 	printf("比較第一次初始化，和第二次初始化的時間差異\n");
-	printf("init: %f\n", ts_to_double(init2)-ts_to_double(init1));
-	printf("init: %f\n", ts_to_double(init3)-ts_to_double(init4));
+	printf("first init:\t%f\n", ts_to_double(init2)-ts_to_double(init1));
+	printf("second init:\t%f\n", ts_to_double(init4)-ts_to_double(init3));
 	printf("比較row major和column major的速度的差異\n");
-	printf("row major: %f\n", ts_to_double(row2)-ts_to_double(row1));
-	printf("column major: %f\n", ts_to_double(col2)-ts_to_double(col1));
+	printf("row major:\t%f\n", ts_to_double(row2)-ts_to_double(row1));
+	printf("column major:\t%f\n", ts_to_double(col2)-ts_to_double(col1));
 
 	return 0;
 }
