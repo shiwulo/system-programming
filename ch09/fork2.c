@@ -7,6 +7,7 @@ int main()
 {
     int var = 0;
     pid_t pid;
+    //printf是在fork前面
     printf("<<before fork>>");
     pid = fork();
     if(pid == 0) {          /* child 執行 */
