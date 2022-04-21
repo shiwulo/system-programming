@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 	
 	sscanf(argv[2], "%c", &opt);
 	sscanf(argv[3], "%ld", &begin);
-	sscanf(argv[3], "%ld", &end);
+	sscanf(argv[4], "%ld", &end);
 
 	switch (opt) {
 		case 'l':
