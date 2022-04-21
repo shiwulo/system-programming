@@ -9,10 +9,11 @@ int main(void)
 {
     pid_t pid;
     if ((pid = fork()) == 0) {
-	    printf("child");
+	    printf("child\n");
     } else {
+        //child執行得太快了，很難去使用 gdb attach 
 	    printf("child's pid = %d\n", pid);
-	    printf("parent");
+	    printf("parent\n");
     }
     printf("end\n");
     return 0;

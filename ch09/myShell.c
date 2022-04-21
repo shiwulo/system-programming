@@ -59,6 +59,7 @@ void parseString(char* str, char** cmd) {
 }
 
 int main (int argc, char** argv) {
+    //在函數中使用陣列不太好，消耗太多stack空間，但主程式應該不會被遞迴呼叫，比較沒關係
     char cmdLine[4096];
     char hostName[256];
     char cwd[256];
@@ -106,6 +107,7 @@ int main (int argc, char** argv) {
                 chdir(argVect[1]);
             continue;
         }
+        //準備產生child，child會執行execve，parent等待child執行結束
         pid = fork();
         if (pid == 0) {
             /*
