@@ -8,6 +8,7 @@ int main () {
   int var = 0;
   pid_t pid;
   pid = fork ();
+  //注意，printf是在fork後面
   printf ("%d", var);
   if (pid == 0) {
     /* child 執行 */
