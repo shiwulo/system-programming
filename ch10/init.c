@@ -1,5 +1,5 @@
 /*執行方法：
- ./myShell
+ ./init
  >> ls -R /
  ctr-c
  */
@@ -59,10 +59,13 @@
  */
 char* argVect[256];
 
-//下列三個變數作為main和signal handler溝通用
+//jumpbuffer，setjmp和longjmp使用。類似於書籤，只能跳到「caller」
 sigjmp_buf jumpBuf;
+//shell是否產生child process，決定ctr-c要送給誰
 volatile sig_atomic_t hasChild = 0;
+//child的process id
 pid_t childPid;
+//每秒鐘有多少個nanoseconds
 const long long nspersec = 1000000000;
 
 long long timespec2sec(struct timespec ts) {
@@ -72,6 +75,7 @@ long long timespec2sec(struct timespec ts) {
     //return (double)ns/1000000000.0;
 }
 
+//將timeval資料結構轉換成多少個 nanoseconds
 double timeval2sec(struct timeval input) {
     long long us = input.tv_sec*1000000;
     us += input.tv_usec;
@@ -81,10 +85,13 @@ double timeval2sec(struct timeval input) {
 
 /*signal handler專門用來處理ctr-c*/
 void ctrC_handler(int sigNumber) {
+    //如果shell有child，結束掉child。例如：正在執行ls
     if (hasChild) {
         kill(childPid, sigNumber);
         hasChild = 0;
-    } else {
+    }
+    //否則的話，先將「^c」放回到 input stream，然後讓主迴圈決定怎樣處理「^c」 
+    else {
         /*確認main function並不是剛好在處理字串，這裡使用一個隱含的同步方法*/
         /*藉由確認是否argVect[0]（即執行檔）是否為NULL保證main function不是在處理字串*/
         /*主程式的控制迴圈必須在一開始的地方將argVect[0]設為NULL*/
@@ -97,6 +104,11 @@ void ctrC_handler(int sigNumber) {
         }
     }
 }
+
+/*
+與myShell.c不一樣的地方，額外實現了dir這個指令
+dir可以列出當前目錄裡的所有檔案，功能類似於 ls
+*/
 
 int dir()
 {
@@ -135,6 +147,8 @@ void parseString(char* str, char** cmd) {
     int idx=0;
     char* retPtr;
     //printf("%s\n", str);
+    //這裡使用了strrtok，這個函數可以將字串切割成小字串
+    //第二個參數決定「切割的依據」，在此為換行符號「\n」與空白符號「 」
     retPtr=strtok(str, " \n");
     while(retPtr != NULL) {
         //printf("token =%s\n", retPtr);
@@ -147,6 +161,7 @@ void parseString(char* str, char** cmd) {
         printf("para = %s\n", retPtr);
         retPtr=strtok(NULL, " \n");
     }
+    //最後一個字串指標設定為NULL，這樣才知道「已經到字串陣列的結尾」
     argVect[idx]=NULL;
 }
 
@@ -159,11 +174,12 @@ int main (int argc, char** argv) {
     struct rusage resUsage;     //資源使用率
     struct timespec statTime, endTime;
     /*底下程式碼註冊signal的處理方式*/
-    //signal(SIGINT, ctrC_handler);
-    //signal(SIGQUIT, SIG_IGN);
-    //signal(SIGTSTP, SIG_IGN);
+    signal(SIGINT, ctrC_handler);
+    signal(SIGQUIT, SIG_IGN);
+    signal(SIGTSTP, SIG_IGN);
     
     /*無窮迴圈直到使用者輸入exit*/
+    //平常的工作是讀取使用者輸入的字串，然後執行該字串
     while(1) {
         char* showPath;
         char* loginName;
@@ -171,7 +187,7 @@ int main (int argc, char** argv) {
         //設定化hasChild, argVect[0]，避免發生race condtion
         hasChild = 0;
         argVect[0]=NULL;
-        //抓取主機名稱、用戶名稱
+        //抓取主機名稱、用戶名稱，這二個函數是google得到的
         loginName = getlogin();
         gethostname(hostName, 256);
         /*
@@ -179,6 +195,8 @@ int main (int argc, char** argv) {
          會參考"home"將"home"路徑取代為~
          */
         getcwd(cwd, 256);
+        //得到當前的工作目錄和家目錄的關係
+        //目的是：把/home/shiwulo/Desktop 轉換成 ~/Desktop
         pos=strspn(getenv("HOME"), cwd);
         homeLen = strlen(getenv("HOME"));
         //printf("cwd=%s, home=%s, pos=%d, prompt=%s", cwd, getenv("HOME"), pos, &cwd[pos]);
@@ -193,12 +211,11 @@ int main (int argc, char** argv) {
          */
         printf(LIGHT_GREEN"%s@%s:", loginName, hostName);
         printf(BLU_BOLD"%s>> " NONE, showPath);
-        //dir();
-        //printf();
         //設定返回地點，如果使用者按下ctr-c會從sigsetjmp的下一行開始執行
+        //相當於設定書籤
         sigsetjmp(jumpBuf, 1);
         /*
-         接收使用者命令，除了cd, exit以外，其他指令呼叫對應的執行檔
+         接收使用者命令，除了cd, exit, dir, ^c 以外，其他指令呼叫對應的執行檔
          */
         fgets(cmdLine, 4096, stdin);
         printf("cmd = %s\n", cmdLine);
@@ -206,19 +223,23 @@ int main (int argc, char** argv) {
         if (strlen(cmdLine)>1)  //判斷長度是否大於1，判斷「使用者無聊按下enter鍵」
             parseString(cmdLine, &exeName);
         else
-            continue;
-        if (strcmp(exeName, "^c") == 0) {   //使用者按下control-c，^c是由signal handler放入
+            continue;   //提示：continue是回到「while(1)」的那一行
+        //使用者按下control-c，^c是由signal handler「ctrC_handler()」放入
+        if (strcmp(exeName, "^c") == 0) {   
             //printf("ctr-c \n");
             printf("\n");
             continue;
         }
+        //輸入dir，列出該目錄的所有物件
         if (strcmp(exeName, "dir")==0) {
             dir();
             printf("\n");
             continue;
         }
+        //結束shell，因此跳出 while(1)
         if (strcmp(exeName, "exit") == 0)   //內建指令exit
             break;
+        //cd指令一定是內建指令，是改變shell的工作目錄，shell的child會繼承這個工作目錄
         if (strcmp(exeName, "cd") == 0) {   //內建指令cd
             if (strcmp(argVect[1], "~")==0)
                 chdir(getenv("HOME"));
@@ -226,20 +247,23 @@ int main (int argc, char** argv) {
                 chdir(argVect[1]);
             continue;
         }
+        //開始計算執行一個「外部指令」花多少時間
         clock_gettime(CLOCK_MONOTONIC, &statTime);
         pid = fork();   //除了exit, cd，其餘為外部指令
         if (pid == 0) {
             /*
              產生一個child執行使用者的指令
              */
-            int ret;
+            //int ret;
             //ret = chmod(exeName, 511);
+            /*
             ret = chown(exeName, 0, 0);
             if (ret == -1) {
                 perror("chmod");
             } else {
                 printf("chmod: success\n");
             }
+            */
             if (execve(exeName, argVect, NULL)==-1) {
                 perror("myShell");
                 exit(errno*-1);
