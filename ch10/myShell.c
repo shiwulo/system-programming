@@ -103,6 +103,10 @@ void parseString(char* str, char** cmd) {
     argVect[idx]=NULL;
 }
 
+/*
+請參考myshell2.c的註解
+*/
+
 int main (int argc, char** argv) {
     char cmdLine[4096];
     char hostName[256];
