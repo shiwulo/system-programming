@@ -67,6 +67,9 @@ void parseString(char *str, char **cmd) {
   argVect[idx] = NULL;
 }
 
+// 🧡 💛 💚 💙 💜
+// 設定要將哪些siganl轉乘signalfd
+// 🧡 💛 💚 💙 💜
 //設定要聽的singal到singalfd中
 //回傳值是fd
 int setupSignalfd() {
@@ -108,6 +111,17 @@ void printPrompt() {
   fflush(stdout); 
 }
 
+/**
+ * @brief 
+ * 🧡 💛 💚 💙 💜
+ * 這個程式最特別的地方是「使用signalfd」讀取signal，而非使用signal handler
+ * 這樣做的好處是「不用像signal handler那樣，要額外想辦法和主程式同步」
+ * 🧡 💛 💚 💙 💜
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
+
 int main(int argc, char **argv) {
   char cmdLine[4096];
   char *exeName;
@@ -123,6 +137,10 @@ int main(int argc, char **argv) {
   // 睡10秒，有充分的時間設定breakpoint
   // sleep(10);
 
+  //🧡 💛 💚 💙 💜
+  //這裡空要使用二個技巧，一個是signal fd，另一個是epoll
+  //epoll可以同時間看多個file descriptor
+  //🧡 💛 💚 💙 💜
   //設定epoll
   sig_fd = setupSignalfd();
   epollfd = epoll_create1(0); //隨便傳一個參數進去都可以，Linux不管這個參數了
@@ -138,8 +156,9 @@ int main(int argc, char **argv) {
     if (child_pid == -1)
       printPrompt();
   wait_event:
-    //等待鍵盤或者是signal發生
+    //🧡 💛 💚 💙 💜 等待鍵盤或者是signal發生 🧡 💛 💚 💙 💜
     assert(epoll_wait(epollfd, &event, 1, -1) != -1);
+    //🧡 💛 💚 💙 💜 由event得知到底是哪個file descriptor需要處理 🧡 💛 💚 💙 💜
     if (event.data.fd == sig_fd) { //收到signal
       int s =
           read(sig_fd, &fdsi,

@@ -1,6 +1,12 @@
 #include <setjmp.h>
 #include <stdio.h>
 
+/**
+ * @brief 示範setjmp和longjmp的使用方式，請特別注意，只能longjmp到caller
+ * 可以試試看longjmp到callee看看，如果longjmp到callee會造成錯誤
+ * 
+ */
+
 jmp_buf buf;
 
 int b() {

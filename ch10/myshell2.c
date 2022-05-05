@@ -171,8 +171,8 @@ int main (int argc, char** argv) {
     char cwd[256];
     char* exeName;
     int pid, pos, wstatus;
-    struct rusage resUsage;     //資源使用率
-    struct timespec statTime, endTime;
+    struct rusage resUsage;     //資源使用率，shell可以「wait3()」得到child的資源使用率
+    struct timespec statTime, endTime;  //外部程式的開始執行時間、結束時間
     /*底下程式碼註冊signal的處理方式*/
     signal(SIGINT, ctrC_handler);
     signal(SIGQUIT, SIG_IGN);
@@ -251,19 +251,8 @@ int main (int argc, char** argv) {
         clock_gettime(CLOCK_MONOTONIC, &statTime);
         pid = fork();   //除了exit, cd，其餘為外部指令
         if (pid == 0) {
-            /*
-             產生一個child執行使用者的指令
-             */
-            //int ret;
-            //ret = chmod(exeName, 511);
-            /*
-            ret = chown(exeName, 0, 0);
-            if (ret == -1) {
-                perror("chmod");
-            } else {
-                printf("chmod: success\n");
-            }
-            */
+            //在這個地方如果要避免錯誤，可以呼叫access()確認真的有該執行檔案
+            //https://tw.gitbook.net/unix_system_calls/access.html
             if (execve(exeName, argVect, NULL)==-1) {
                 perror("myShell");
                 exit(errno*-1);
