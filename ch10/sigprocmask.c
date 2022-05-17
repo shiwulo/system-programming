@@ -2,8 +2,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
+
 void sighandler(int signumber) {
-    printf("get a signal named '%d', '%s'\n", signumber, sys_siglist[signumber]);
+    printf("get a signal named '%d', '%s'\n", signumber, strsignal(signumber));
 }
 
 /**

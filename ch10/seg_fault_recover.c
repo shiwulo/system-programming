@@ -6,7 +6,7 @@
 
 int *c;
 void sighandler(int signumber) {
-    printf("get a signal named '%d', '%s'\n", signumber, sys_siglist[signumber]);
+    printf("get a signal named '%d', '%s'\n", signumber, strsignal(signumber));
     c=(int*)malloc(sizeof(int));
 }
 int main(int argc, char **argv) {

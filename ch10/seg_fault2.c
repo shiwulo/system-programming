@@ -16,7 +16,7 @@ void sighandler(int signumber, siginfo_t *sinfo, void *ucontext) {
 	ucontext_t *context = ucontext;
 
 	printf("got a signal %d(%s)\n", signumber,
-			sys_siglist[signumber]);
+			strsignal(signumber));
   
 	/* NOTE: assigning to 'c' instead of 'REG_R12' likely won't work on most systems
 	   due to register content restoration after a signal handler returns */

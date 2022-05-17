@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
           printf(RED "the child process was terminated by a signal " YELLOW
                      "%d" RED ", named " YELLOW "%s.\n",
                  WTERMSIG(fdsi.ssi_status),
-                 sys_siglist[WTERMSIG(fdsi.ssi_status)]);
+                 strsignal(WTERMSIG(fdsi.ssi_status)));
         }
         printf(NONE);
         child_pid = -1;

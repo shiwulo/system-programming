@@ -217,7 +217,7 @@ int main (int argc, char** argv) {
             //printf("isSignaled? %d\n", WIFSIGNALED(wstatus));
             if (WIFSIGNALED(wstatus))
                 printf(RED"the child process was terminated by a signal "YELLOW"%d"RED
-                    ", named " YELLOW "%s.\n",  WTERMSIG(wstatus), sys_siglist[WTERMSIG(wstatus)]);
+                    ", named " YELLOW "%s.\n",  WTERMSIG(wstatus), strsignal(WTERMSIG(wstatus)));
             printf(NONE);
         }
     }
