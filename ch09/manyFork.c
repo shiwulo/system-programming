@@ -9,7 +9,7 @@ usage: time ./manyFork 100000
 int main(int argc, char** argv) {
     int i, num, pid, wstatus;
     sscanf(argv[1], "%d", &num);
-    printf("這個應用程式是測試fork %d 次需要花多少時間\n");
+    printf("這個應用程式是測試fork %d 次需要花多少時間\n", num);
     for (int i=0; i<num; i++) {
         pid = fork();
         if (pid==0) exit(0);
