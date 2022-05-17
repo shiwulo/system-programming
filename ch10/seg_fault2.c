@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/ucontext.h>
+#include <string.h>
 
 /* Define 'c' as a global register variable
    https://gcc.gnu.org/onlinedocs/gcc/Global-Register-Variables.html */

@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int *c;
 void sighandler(int signumber) {
