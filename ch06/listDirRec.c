@@ -33,11 +33,11 @@ void listDir(char* pathName)
     char* newPathName = (char*)malloc(PATH_MAX);
     struct dirent entry;
     struct dirent* result;
-    int ret;
-    ret = readdir_r(curDir, &entry, &result);
+    struct direct* ret;
+    result = readdir(curDir);
     while(result != NULL) {
         if (strcmp(entry.d_name, ".") == 0 || strcmp(entry.d_name, "..") == 0) {
-            ret = readdir_r(curDir, &entry, &result);
+            result = readdir(curDir);
             assert(ret == 0);
             continue;
         }
@@ -52,7 +52,7 @@ void listDir(char* pathName)
             printf("%s\n", newPathName);
             listDir(newPathName);
         }
-        ret = readdir_r(curDir, &entry, &result);
+        result = readdir(curDir);
         assert(ret == 0);        
     }
     closedir(curDir);
