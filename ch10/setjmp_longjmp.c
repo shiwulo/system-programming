@@ -32,9 +32,9 @@ int main(int argc, char** argv) {
     p2=2;
     p3=3;
     //回傳值0有特別用途，代表setjmp成功
-    if ((ret=setjmp(buf)) == 0)
+    if ((ret=setjmp(buf)) == 0) {
         a();
-    else {
+    } else {
         printf("return form longjmp."
             " the return value is %d\n", ret);
         printf("p1 = %d, p2 = %d, p3 = %d\n", p1, p2, p3);
