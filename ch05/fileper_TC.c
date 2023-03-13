@@ -43,6 +43,47 @@ int main(int argc, char *argv[])
     }
 
     setlocale(LC_ALL, "");	// 設置環境為當前語言
+	
+/**
+
+    char *input_file = NULL; // 輸入文件名稱，預設為 NULL
+    char *output_file = NULL; // 輸出文件名稱，預設為 NULL
+
+    int opt;
+    while ((opt = getopt(argc, argv, "i:o:")) != -1) { // 使用 getopt 函数解析命令行参数
+        switch (opt) {
+        case 'i': // 如果是选项 i，则 optarg 指向对应的参数字符串
+            input_file = optarg;
+            break;
+        case 'o': // 如果是选项 o，则 optarg 指向对应的参数字符串
+            output_file = optarg;
+            break;
+        default: // 如果是未知选项，则返回 '?'，并输出提示信息
+            fprintf(stderr, "Usage: %s [-i input_file] [-o output_file]\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    if (input_file == NULL || output_file == NULL) { // 如果缺少输入或输出文件，则输出提示信息
+        fprintf(stderr, "Usage: %s [-i input_file] [-o output_file]\n",
+                argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *input_fp = fopen(input_file, "r");	// 打開輸入文件
+    if (!input_fp) { // 如果打开文件失败，则输出错误信息
+        fprintf(stderr, "Failed to open input file '%s'\n", input_file);
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *output_fp = fopen(output_file, "w");	// 打開輸出文件
+    if (!output_fp) { // 如果打开文件失败，则输出错误信息
+        fprintf(stderr, "Failed to open output file '%s'\n", output_file);
+        exit(EXIT_FAILURE);
+    }
+
+*/
 
     FILE *input_file = fopen(argv[1], "r");	// 打開輸入文件
     if (!input_file) {
