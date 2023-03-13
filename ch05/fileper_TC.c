@@ -36,6 +36,7 @@ int get_wchar_width(wchar_t wc)
 
 int main(int argc, char *argv[])
 {
+	
     if (argc != 3) {
 	fprintf(stderr, "Usage: %s <input_file> <output_file>\n", argv[0]);
 	exit(EXIT_FAILURE);
