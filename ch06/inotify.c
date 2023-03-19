@@ -30,56 +30,43 @@ void printInotifyEvent(struct inotify_event *event)
 	if (event->mask & IN_ATTRIB) {
 		strncat(buf + strlen(buf), "ATTRIB, ", 4095);
 	}
-	if (event->mask & IN_CLOSE_WRITE)
-	{
+	if (event->mask & IN_CLOSE_WRITE) {
 		strncat(buf + strlen(buf), "CLOSE_WRITE, ", 4095);
 	}
-	if (event->mask & IN_CLOSE_NOWRITE)
-	{
+	if (event->mask & IN_CLOSE_NOWRITE) {
 		strncat(buf + strlen(buf), "IN_CLOSE_NOWRITE, ", 4095);
 	}
-	if (event->mask & IN_CREATE)
-	{
+	if (event->mask & IN_CREATE) {
 		strncat(buf + strlen(buf), "IN_CREATE, ", 4095);
 	}
-	if (event->mask & IN_DELETE)
-	{
+	if (event->mask & IN_DELETE) {
 		strncat(buf + strlen(buf), "IN_DELETE, ", 4095);
 	}
-	if (event->mask & IN_DELETE_SELF)
-	{
+	if (event->mask & IN_DELETE_SELF) {
 		strncat(buf + strlen(buf), "IN_DELETE_SELF, ", 4095);
 	}
-	if (event->mask & IN_MODIFY)
-	{
+	if (event->mask & IN_MODIFY) {
 		strncat(buf + strlen(buf), "IN_MODIFY, ", 4095);
 	}
-	if (event->mask & IN_MOVE_SELF)
-	{
+	if (event->mask & IN_MOVE_SELF) {
 		strncat(buf + strlen(buf), "IN_MOVE_SELF, ", 4095);
 	}
-	if (event->mask & IN_MOVED_FROM)
-	{
+	if (event->mask & IN_MOVED_FROM) {
 		strncat(buf + strlen(buf), "IN_MOVED_FROM, ", 4095);
 	}
-	if (event->mask & IN_MOVED_TO)
-	{
+	if (event->mask & IN_MOVED_TO) {
 		strncat(buf + strlen(buf), "IN_MOVED_TO, ", 4095);
 	}
-	if (event->mask & IN_OPEN)
-	{
+	if (event->mask & IN_OPEN) {
 		strncat(buf + strlen(buf), "IN_OPEN", 4095);
 	}
-	if (event->mask & IN_IGNORED)
-	{
+	if (event->mask & IN_IGNORED) {
 		strncat(buf + strlen(buf), "IN_IGNORED, ", 4095);
 	}
-	if (event->mask & IN_ISDIR)
-	{
+	if (event->mask & IN_ISDIR) {
 		strncat(buf + strlen(buf), "IN_ISDIR, ", 4095);
 	}
-	if (event->mask & IN_Q_OVERFLOW)
-	{
+	if (event->mask & IN_Q_OVERFLOW) {
 		strncat(buf + strlen(buf), "IN_Q_OVERFLOW, ", 4095);
 	}
 	strncat(buf, "}, ", 4095);
@@ -130,15 +117,15 @@ int main(int argc, char **argv)
 		{
 			printInotifyEvent((struct inotify_event *)eventPtr);
 			/*
-            struct inotify_event {
-                int      wd;       // Watch descriptor 
-                uint32_t mask;     // Mask describing event 
-                uint32_t cookie;   // Unique cookie associating related
-                                   //     events (for rename(2))
-                uint32_t len;      // Size of name field 🦐 🦞 🦀 在這裏OS會告訴我們name的長度
-                char     name[];   // Optional null-terminated name
-                };
-            */
+			    struct inotify_event {
+				int      wd;       // Watch descriptor 
+				uint32_t mask;     // Mask describing event 
+				uint32_t cookie;   // Unique cookie associating related
+						   //     events (for rename(2))
+				uint32_t len;      // Size of name field 🦐 🦞 🦀 在這裏OS會告訴我們name的長度
+				char     name[];   // Optional null-terminated name
+				};
+			*/
 			//目前這個物件的長度是 基本的inotiry_event的長度 ＋ name字串的長度
 			//將eventPtr加上物件長度，就是下一個物件的開始位置
 			eventPtr += sizeof(struct inotify_event) + ((struct inotify_event *)eventPtr)->len;
