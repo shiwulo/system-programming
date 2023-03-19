@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         permVal = acl_get_perm(permset, ACL_EXECUTE);
         printf("%c", (permVal == 1) ? 'x' : '-');
         printf("\n");
-  }
-// 釋放ACL資源
-acl_free(acl);
+    }
+    // 釋放ACL資源
+    acl_free(acl);
 }
