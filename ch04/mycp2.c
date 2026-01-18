@@ -65,6 +65,11 @@ int main(int argc, char* argv[]) {
 	while (1) {
 		cur_off = lseek(inputFd, cur_off, SEEK_DATA);
         data_off = cur_off;
+        // 後面無資料，只剩下洞的情況
+        if (data_off == -1 && errno == ENXIO){
+            ftruncate(outputFd, fileSize);
+            break;
+        }
 		cur_off = lseek(inputFd, cur_off, SEEK_HOLE);
         hole_off = cur_off;
         //第一種情況，資料在前面，洞在後面，不用特別處理
